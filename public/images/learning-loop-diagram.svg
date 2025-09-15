@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">LearningLoop Closed-Loop System Diagram</title>
+  <desc id="desc">A flow from Observe to Evaluate to Learn to Adapt with a feedback loop and a Human-in-the-Loop swimlane.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="960" height="420" fill="url(#bg)"/>
+
+  <!-- Swimlane label -->
+  <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, sans-serif" fill="#0f172a" stroke="none">
+    <text x="40" y="44" font-size="18" fill="#334155">LearningLoop — Observe • Evaluate • Learn • Adapt</text>
+  </g>
+
+  <!-- Nodes -->
+  <g filter="url(#shadow)" stroke="#e2e8f0" stroke-width="1" fill="#ffffff">
+    <rect x="80"  y="100" rx="14" ry="14" width="200" height="90"/>
+    <rect x="300" y="100" rx="14" ry="14" width="200" height="90"/>
+    <rect x="520" y="100" rx="14" ry="14" width="200" height="90"/>
+    <rect x="740" y="100" rx="14" ry="14" width="200" height="90"/>
+  </g>
+
+  <!-- Labels -->
+  <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, sans-serif" fill="#0f172a" text-anchor="middle">
+    <text x="180" y="132" font-size="16" font-weight="700">Observe</text>
+    <text x="180" y="156" font-size="12" fill="#475569">Data • Logs • User Actions</text>
+
+    <text x="400" y="132" font-size="16" font-weight="700">Evaluate</text>
+    <text x="400" y="156" font-size="12" fill="#475569">Metrics • Anomalies • Feedback</text>
+
+    <text x="620" y="132" font-size="16" font-weight="700">Learn</text>
+    <text x="620" y="156" font-size="12" fill="#475569">Models • Rules • Context</text>
+
+    <text x="840" y="132" font-size="16" font-weight="700">Adapt</text>
+    <text x="840" y="156" font-size="12" fill="#475569">Redeploy • Reconfigure • Update UX</text>
+  </g>
+
+  <!-- Arrows -->
+  <g stroke="#0ea5e9" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#0ea5e9" />
+      </marker>
+    </defs>
+    <line x1="280" y1="145" x2="300" y2="145"/>
+    <line x1="500" y1="145" x2="520" y2="145"/>
+    <line x1="720" y1="145" x2="740" y2="145"/>
+    <!-- Loop back path -->
+    <path d="M 840 190 C 840 260, 180 260, 180 190"/>
+    <line x1="180" y1="190" x2="180" y2="190"/>
+  </g>
+
+  <!-- Human-in-the-Loop Box -->
+  <g filter="url(#shadow)">
+    <rect x="360" y="250" rx="12" ry="12" width="240" height="80" fill="#0ea5e9" opacity="0.08" stroke="#0ea5e9"/>
+  </g>
+  <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, sans-serif" text-anchor="middle">
+    <text x="480" y="274" font-size="14" fill="#0ea5e9" font-weight="700">Human‑in‑the‑Loop</text>
+    <text x="480" y="296" font-size="12" fill="#0369a1">Reviewer / Validator • SME Gates</text>
+    <g stroke="#0ea5e9" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+      <path d="M 400 250 C 400 220, 400 190, 400 190"/>
+      <path d="M 560 250 C 560 220, 560 190, 560 190"/>
+    </g>
+  </g>
+
+  <!-- Legend -->
+  <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, sans-serif" fill="#334155">
+    <rect x="40" y="348" width="10" height="10" fill="#0ea5e9" />
+    <text x="58" y="357" font-size="12">Signal Flow</text>
+    <rect x="140" y="344" width="18" height="18" rx="3" ry="3" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="164" y="357" font-size="12" text-anchor="start">Component</text>
+  </g>
+</svg>
+
