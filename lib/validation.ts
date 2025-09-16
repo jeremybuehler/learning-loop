@@ -31,3 +31,29 @@ export function requireApiKey(req: Request): Response | null {
   return null
 }
 
+// Evaluation inputs/config
+export const ScoreInputSchema = z.object({
+  eventId: z.string().min(1).max(128),
+  metric: z.string().min(1).max(128),
+  value: z.number().finite(),
+})
+
+export type ScoreInput = z.infer<typeof ScoreInputSchema>
+
+export const EvalConfigSchema = z.object({
+  metric: z.string().min(1).max(128),
+  comparison: z.enum(['gt', 'lt']).default('gt'),
+  warn: z.number().finite(),
+  crit: z.number().finite(),
+  windowSeconds: z.number().int().min(1).max(86400).default(300),
+  enabled: z.boolean().default(true),
+}).superRefine((val, ctx) => {
+  if (val.comparison === 'gt' && !(val.warn <= val.crit)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['warn'], message: 'For gt, warn should be <= crit' })
+  }
+  if (val.comparison === 'lt' && !(val.warn >= val.crit)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['warn'], message: 'For lt, warn should be >= crit' })
+  }
+})
+
+export type EvalConfigInput = z.infer<typeof EvalConfigSchema>
