@@ -4,39 +4,7 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,
   },
-  async headers() {
-    const isDev = process.env.NODE_ENV !== 'production';
-    const directives = {
-      "default-src": ["'self'"],
-      "img-src": ["'self'", "data:", "blob:"],
-      "style-src": ["'self'", "'unsafe-inline'"],
-      // Temporarily allow inline/eval for Next.js hydration; tighten with nonce later
-      "script-src": isDev
-        ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:"]
-        : ["'self'", "'unsafe-inline'"],
-      "font-src": ["'self'", "data:"],
-      "connect-src": isDev ? ["'self'", "ws:", "wss:"] : ["'self'"],
-      "worker-src": ["'self'", "blob:"],
-      "frame-ancestors": ["'self'"],
-      "base-uri": ["'self'"],
-      "form-action": ["'self'"],
-    };
-    const csp = Object.entries(directives)
-      .map(([k, v]) => `${k} ${v.join(' ')}`)
-      .join('; ');
-
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          { key: 'Content-Security-Policy', value: csp },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-        ],
-      },
-    ];
-  },
+  // CSP moved to middleware.ts to support per-request nonces
 }
 
 export default nextConfig
