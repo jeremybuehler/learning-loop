@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Severity {
+  OK
+  WARN
+  CRIT
+}
+
+enum Comparison {
+  gt
+  lt
+}
+
 model Telemetry {
   id        Int      @id @default(autoincrement())
   timestamp DateTime @default(now())
@@ -33,7 +44,19 @@ model Score {
   eventId String
   metric  String
   value   Float
+  severity Severity @default(OK)
   ts      DateTime @default(now())
 
   @@index([metric, ts])
+}
+
+model EvaluationConfig {
+  id             Int         @id @default(autoincrement())
+  metric         String      @unique
+  comparison     Comparison  @default(gt)
+  warn           Float
+  crit           Float
+  windowSeconds  Int         @default(300)
+  enabled        Boolean     @default(true)
+  updatedAt      DateTime    @updatedAt
 }
