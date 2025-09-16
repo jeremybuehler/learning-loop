@@ -10,9 +10,10 @@ const nextConfig = {
       "default-src": ["'self'"],
       "img-src": ["'self'", "data:", "blob:"],
       "style-src": ["'self'", "'unsafe-inline'"],
+      // Temporarily allow inline/eval for Next.js hydration; tighten with nonce later
       "script-src": isDev
         ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:"]
-        : ["'self'"],
+        : ["'self'", "'unsafe-inline'"],
       "font-src": ["'self'", "data:"],
       "connect-src": isDev ? ["'self'", "ws:", "wss:"] : ["'self'"],
       "worker-src": ["'self'", "blob:"],
