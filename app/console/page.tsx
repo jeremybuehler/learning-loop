@@ -6,6 +6,8 @@ export default function ConsoleHome() {
       <ul className="list-disc ml-6 text-sm">
         <li><a className="text-blue-600 underline" href="/console/telemetry">Telemetry</a></li>
         <li><a className="text-blue-600 underline" href="/console/feedback">Feedback</a></li>
+        <li><a className="text-blue-600 underline" href="/console/scores">Scores</a></li>
+        <li><a className="text-blue-600 underline" href="/console/config">Eval Config</a></li>
       </ul>
     </main>
   )

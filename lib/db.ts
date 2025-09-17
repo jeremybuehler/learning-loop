@@ -96,6 +96,10 @@ export async function getDb() {
         })
         return { metric: c.metric, comparison: c.comparison as 'gt' | 'lt', warn: c.warn, crit: c.crit, windowSeconds: c.windowSeconds, enabled: c.enabled, updatedAt: c.updatedAt.toISOString() } as EvaluationConfig
       },
+      async listEvalConfigs() {
+        const rows = await prisma.evaluationConfig.findMany({ orderBy: { metric: 'asc' } })
+        return rows.map((c: any) => ({ metric: c.metric, comparison: c.comparison as 'gt' | 'lt', warn: c.warn, crit: c.crit, windowSeconds: c.windowSeconds, enabled: c.enabled, updatedAt: c.updatedAt.toISOString() }))
+      },
     }
   }
   // Fallback: in-memory store
@@ -127,6 +131,9 @@ export async function getDb() {
         const withTs = { ...cfg, updatedAt: new Date().toISOString() }
         mem.configs.set(cfg.metric, withTs)
         return withTs
+      },
+      async listEvalConfigs() {
+        return Array.from(mem.configs.values()).sort((a, b) => a.metric.localeCompare(b.metric))
       },
   }
 }
