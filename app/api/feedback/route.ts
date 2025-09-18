@@ -3,10 +3,44 @@ import { getDb } from '@/lib/db'
 import { FeedbackSchema, requireApiKey } from '@/lib/validation'
 import { checkRateLimit, rateLimitHeaders } from '@/lib/rateLimit'
 
+type FeedbackStats = {
+  total: number
+  byLabel: Array<{ label: string; count: number }>
+  reviewers: Array<{ reviewer: string; count: number }>
+}
+
+function buildFeedbackStats(items: Array<{ label: string; reviewer?: string }>): FeedbackStats {
+  const labelCounts = new Map<string, number>()
+  const reviewerCounts = new Map<string, number>()
+
+  for (const item of items) {
+    labelCounts.set(item.label, (labelCounts.get(item.label) ?? 0) + 1)
+    if (item.reviewer) {
+      reviewerCounts.set(item.reviewer, (reviewerCounts.get(item.reviewer) ?? 0) + 1)
+    }
+  }
+
+  const byLabel = Array.from(labelCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([label, count]) => ({ label, count }))
+
+  const reviewers = Array.from(reviewerCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([reviewer, count]) => ({ reviewer, count }))
+
+  return {
+    total: items.length,
+    byLabel,
+    reviewers,
+  }
+}
+
 export async function GET() {
   const db = await getDb()
   const items = await db.listFeedback()
-  return Response.json({ items })
+  return Response.json({ items, stats: buildFeedbackStats(items) })
 }
 
 export async function POST(req: Request) {

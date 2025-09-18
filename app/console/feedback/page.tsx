@@ -9,6 +9,12 @@ type Feedback = {
   ts: string
 }
 
+type FeedbackStats = {
+  total: number
+  byLabel: Array<{ label: string; count: number }>
+  reviewers: Array<{ reviewer: string; count: number }>
+}
+
 export default function FeedbackPage() {
   const [items, setItems] = useState<Feedback[]>([])
   const [loading, setLoading] = useState(true)
@@ -16,12 +22,14 @@ export default function FeedbackPage() {
   const [qLabel, setQLabel] = useState('')
   const [autoRefresh, setAutoRefresh] = useState(false)
   const [intervalMs, setIntervalMs] = useState(10000)
+  const [stats, setStats] = useState<FeedbackStats | null>(null)
 
   async function load() {
     setLoading(true)
     const res = await fetch('/api/feedback', { cache: 'no-store' })
     const data = await res.json()
     setItems(data.items || [])
+    setStats(data.stats || null)
     setLoading(false)
   }
 
@@ -83,6 +91,39 @@ export default function FeedbackPage() {
           />
         </div>
       </div>
+
+      {stats && !loading && (
+        <section className="grid gap-4 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-gray-500">Feedback items (last 100)</p>
+            <p className="text-2xl font-semibold">{stats.total}</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wide text-gray-500">Top labels</p>
+            <ul className="mt-1 space-y-1">
+              {stats.byLabel.map((row) => (
+                <li key={row.label} className="flex items-center justify-between">
+                  <span>{row.label}</span>
+                  <span className="font-mono">{row.count}</span>
+                </li>
+              ))}
+              {stats.byLabel.length === 0 && <li className="text-gray-500">—</li>}
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wide text-gray-500">Active reviewers</p>
+            <ul className="mt-1 space-y-1">
+              {stats.reviewers.map((row) => (
+                <li key={row.reviewer} className="flex items-center justify-between">
+                  <span>{row.reviewer}</span>
+                  <span className="font-mono">{row.count}</span>
+                </li>
+              ))}
+              {stats.reviewers.length === 0 && <li className="text-gray-500">—</li>}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {loading ? (
         <div className="text-sm text-gray-600">Loading…</div>

@@ -3,8 +3,10 @@ import { NextResponse, type NextRequest } from 'next/server'
 function genNonce() {
   const bytes = new Uint8Array(16)
   crypto.getRandomValues(bytes)
-  // Base64 without padding
-  return Buffer.from(bytes).toString('base64').replace(/=+$/, '')
+  // Base64 without padding using Web API utilities
+  let binary = ''
+  for (const b of bytes) binary += String.fromCharCode(b)
+  return btoa(binary).replace(/=+$/, '')
 }
 
 export function middleware(req: NextRequest) {
@@ -46,4 +48,3 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 }
-

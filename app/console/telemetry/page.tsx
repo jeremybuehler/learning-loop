@@ -8,6 +8,13 @@ type Telemetry = {
   payload: any
 }
 
+type TelemetryStats = {
+  total: number
+  byType: Record<string, number>
+  topSources: Array<{ source: string; count: number }>
+  sampleRate: number
+}
+
 export default function TelemetryPage() {
   const [items, setItems] = useState<Telemetry[]>([])
   const [loading, setLoading] = useState(true)
@@ -15,12 +22,14 @@ export default function TelemetryPage() {
   const [filterType, setFilterType] = useState<'all' | 'metric' | 'event' | 'trace'>('all')
   const [autoRefresh, setAutoRefresh] = useState(false)
   const [intervalMs, setIntervalMs] = useState(10000)
+  const [stats, setStats] = useState<TelemetryStats | null>(null)
 
   async function load() {
     setLoading(true)
     const res = await fetch('/api/telemetry', { cache: 'no-store' })
     const data = await res.json()
     setItems(data.items || [])
+    setStats(data.stats || null)
     setLoading(false)
   }
 
@@ -86,6 +95,40 @@ export default function TelemetryPage() {
           </select>
         </div>
       </div>
+
+      {stats && !loading && (
+        <section className="grid gap-4 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-4 text-sm">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-gray-500">Events (last 100)</p>
+            <p className="text-2xl font-semibold">{stats.total}</p>
+            <p className="text-xs text-gray-500">Sample rate {(stats.sampleRate * 100).toFixed(0)}%</p>
+          </div>
+          <div className="sm:col-span-1 lg:col-span-1">
+            <p className="text-xs uppercase tracking-wide text-gray-500">Type mix</p>
+            <ul className="mt-1 space-y-1">
+              {Object.entries(stats.byType).map(([type, count]) => (
+                <li key={type} className="flex items-center justify-between">
+                  <span>{type}</span>
+                  <span className="font-mono">{count}</span>
+                </li>
+              ))}
+              {Object.keys(stats.byType).length === 0 && <li className="text-gray-500">—</li>}
+            </ul>
+          </div>
+          <div className="sm:col-span-2 lg:col-span-2">
+            <p className="text-xs uppercase tracking-wide text-gray-500">Top sources</p>
+            <ul className="mt-1 space-y-1">
+              {stats.topSources.map((src) => (
+                <li key={src.source} className="flex items-center justify-between">
+                  <span>{src.source}</span>
+                  <span className="font-mono">{src.count}</span>
+                </li>
+              ))}
+              {stats.topSources.length === 0 && <li className="text-gray-500">—</li>}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {loading ? (
         <div className="text-sm text-gray-600">Loading…</div>

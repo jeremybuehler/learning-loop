@@ -30,20 +30,21 @@ Notes
   - `LL_RL_WINDOW_MS=60000`
   - `LL_RL_TELEMETRY_LIMIT=60`
   - `LL_RL_FEEDBACK_LIMIT=30`
+  - `LL_TELEMETRY_SAMPLE_RATE=1`
 
 Copy `.env.example` to `.env` and set values per environment.
 
 ## API Endpoints
 - `GET /api/status` → `{ status, mttd_hours, mttr_days }`
-- `GET /api/telemetry` → `{ items }`
-- `POST /api/telemetry` → `{ ok: true }` (Zod validation, rate-limited, requires `x-ll-key` if `LL_API_KEY` set)
-- `GET /api/feedback` → `{ items }`
+- `GET /api/telemetry` → `{ items, stats }` (returns last 100 records plus summary counts)
+- `POST /api/telemetry` → `{ ok: true, sampled? }` (Zod validation, rate-limited, requires `x-ll-key` if `LL_API_KEY` set, honors `LL_TELEMETRY_SAMPLE_RATE`)
+- `GET /api/feedback` → `{ items, stats }`
 - `POST /api/feedback` → `{ ok: true }` (Zod validation, rate-limited, requires `x-ll-key` if `LL_API_KEY` set)
 - Phase 2 (incoming): `/api/evaluate`, `/api/scores`, `/api/eval-config`
 
 ## Dashboards
-- Telemetry: `/console/telemetry` — filters (source/type), auto-refresh
-- Feedback: `/console/feedback` — filters (event/label), auto-refresh
+- Telemetry: `/console/telemetry` — filters (source/type), summary tiles, auto-refresh
+- Feedback: `/console/feedback` — filters (event/label), summary tiles, auto-refresh
 
 ## Security & CSP
 - Production CSP is nonce-based via `middleware.ts` with `script-src 'self' 'nonce-...' 'strict-dynamic'`
@@ -56,5 +57,5 @@ Copy `.env.example` to `.env` and set values per environment.
 
 ## Roadmap (Phases)
 - Phase 0 (Complete): Demo site (SPA, diagram, live chart, Docs)
-- Phase 1 (In Progress): Observability MVP (APIs, validation, rate limits, dashboards, KPIs)
+- Phase 1 (Complete): Observability MVP (hardened APIs, validation, rate limits, Postgres persistence, sampling, dashboards, KPIs)
 - Phase 2 (Next): Evaluation engine (scores, thresholds, alerts, cron, console)

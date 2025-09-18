@@ -16,12 +16,11 @@ A Next.js (App Router, TypeScript, Tailwind) site that showcases the LearningLoo
 
 ## Features
 - Marketing/demo SPA with dark mode, static SVG diagram, live chart
-- APIs for telemetry and feedback (Zod validation, API key, rate limits)
-- Console dashboards with filters and auto-refresh
+- APIs for telemetry and feedback (Zod validation, API key, rate limits, adaptive sampling)
+- Console dashboards with filters, summaries, and auto-refresh
 - Nonce-based CSP in production, relaxed dev CSP for HMR
 
 ## Roadmap (Phases)
 - Phase 0 (Complete): Demo site
-- Phase 1 (In Progress): Observability MVP (APIs, KPIs, dashboards)
+- Phase 1 (Complete): Observability MVP (hardened APIs, Postgres persistence, telemetry sampling, dashboards)
 - Phase 2 (Next): Evaluation Engine (scores, thresholds, alerts, cron)
-
