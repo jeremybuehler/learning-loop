@@ -5,12 +5,12 @@
 - Contact form with basic validation, Docs tab (flagged)
 - CSP implemented with per-request nonces in production
 
-## Phase 1 — Observability MVP (In Progress)
-- APIs: `GET/POST /api/telemetry`, `GET/POST /api/feedback`, `GET /api/status`
-- Validation: Zod; Auth: `LL_API_KEY` on POST; Rate limits: per IP
-- Dashboards: `/console/telemetry`, `/console/feedback` with filters and auto-refresh
-- Persistence: Prisma Postgres with in-memory fallback
-- KPIs (up next): server-side MTTD/MTTR/Capture% and console display
+## Phase 1 — Observability MVP (Complete)
+- Hardened APIs: `GET/POST /api/telemetry`, `GET/POST /api/feedback`, `GET /api/status`
+- Protections: Zod validation, optional `LL_API_KEY`, per-IP rate limits, adaptive sampling env control
+- Dashboards: `/console/telemetry`, `/console/feedback` with filters, summary tiles, auto-refresh
+- Persistence: Prisma Postgres with in-memory fallback for local/dev usage
+- Next enhancements: server-side KPIs (MTTD/MTTR/Capture%) and console visualisation
 
 ## Phase 2 — Evaluation Engine (Next)
 - Schema: `Score.severity`, `EvaluationConfig` (gt/lt thresholds)
@@ -31,4 +31,3 @@
 
 ## Phase 6 — Production Hardening
 - SLOs/SLA, runbooks, metrics/traces/logs, backups, drills
-

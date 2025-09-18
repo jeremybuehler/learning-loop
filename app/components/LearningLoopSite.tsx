@@ -74,9 +74,9 @@ The LearningLoop Agent is the observability + adaptation layer for AI-first appl
 - Deliverables: Next.js SPA (App Router), dark mode, static SVG diagram, live metrics demo, contact form with basic validation, internal Docs tab (flagged).
 - Outcome: Public‑facing demo site that communicates vision and feature set.
 
-### Phase 1 — Observability Layer MVP (Status: Next)
-- Deliverables: Hardened /api/telemetry (validation, rate limits, API key), persisted store (Postgres), schema + migrations, sampling, basic dashboards for telemetry and feedback.
-- Exit Criteria: Pipeline emits baseline MTTD/MTTR dashboards; telemetry and feedback lists accessible.
+### Phase 1 — Observability Layer MVP (Status: Complete)
+- Deliverables: Hardened /api/telemetry (validation, rate limits, API key), Postgres persistence, adaptive sampling controls, console dashboards with summary tiles for telemetry and feedback.
+- Exit Criteria: Teams can ingest telemetry/feedback with sampling, review last 100 records, and see aggregate stats without manual queries.
 
 ### Phase 2 — Evaluation Engine
 - Deliverables: Scoring functions, threshold config, anomaly detection, canary evals, alerting webhooks; status endpoints.
@@ -331,7 +331,7 @@ export default function LearningLoopSite() {
               </Badge>
               <div className="mt-2 flex flex-wrap gap-2">
                 <Badge>Phase 0 — Complete</Badge>
-                <Badge>Next: Phase 1 — Observability</Badge>
+                <Badge>Now live: Observability MVP</Badge>
               </div>
               <h1 className="mt-4 text-4xl md:text-6xl font-extrabold leading-tight">
                 Close the loop between <span className="text-blue-600 dark:text-blue-400">experience</span> and <span className="text-blue-600 dark:text-blue-400">improvement</span>
