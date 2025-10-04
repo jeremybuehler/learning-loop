@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import AgentObservabilityDashboard from "./AgentObservabilityDashboard";
 
 // Internal docs gate (Next.js client env)
 const ENABLE_INTERNAL_DOCS = (process.env.NEXT_PUBLIC_ENABLE_INTERNAL_DOCS === "true");
@@ -234,6 +235,8 @@ export default function LearningLoopSite() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState<null | { id: string }>(null);
   const [errors, setErrors] = useState<{ name?: string; email?: string } | null>(null);
+  const [statusData, setStatusData] = useState({ status: "ok", mttd_hours: 12, mttr_days: 3 });
+  const [statusLoading, setStatusLoading] = useState(true);
 
   const validate = () => {
     const newErr: any = {};
@@ -262,6 +265,32 @@ export default function LearningLoopSite() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    async function loadStatus() {
+      try {
+        const res = await fetch("/api/status", { cache: "no-store" });
+        if (!res.ok) throw new Error("status fetch failed");
+        const data = await res.json();
+        if (!cancelled && data) {
+          setStatusData({
+            status: typeof data.status === "string" ? data.status : "unknown",
+            mttd_hours: Number.isFinite(data.mttd_hours) ? data.mttd_hours : 12,
+            mttr_days: Number.isFinite(data.mttr_days) ? data.mttr_days : 3,
+          });
+        }
+      } catch {
+        // keep defaults
+      } finally {
+        if (!cancelled) setStatusLoading(false);
+      }
+    }
+    loadStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       {/* Header */}
@@ -274,6 +303,7 @@ export default function LearningLoopSite() {
           <nav className="hidden md:flex items-center gap-6">
             <NavLink href="#features">Features</NavLink>
             <NavLink href="#diagram">Diagram</NavLink>
+            <NavLink href="#console">Console</NavLink>
             {ENABLE_INTERNAL_DOCS && <NavLink href="#docs">Docs</NavLink>}
             <NavLink href="#metrics">Metrics</NavLink>
             <NavLink href="#pricing">Pricing</NavLink>
@@ -306,6 +336,7 @@ export default function LearningLoopSite() {
               {[
                 ["#features", "Features"],
                 ["#diagram", "Diagram"],
+                ["#console", "Console"],
                 ...(ENABLE_INTERNAL_DOCS ? ([["#docs", "Docs"]] as const) : []),
                 ["#metrics", "Metrics"],
                 ["#pricing", "Pricing"],
@@ -421,6 +452,29 @@ export default function LearningLoopSite() {
           </div>
         </Section>
 
+        {/* CONSOLE PREVIEW */}
+        <Section id="console" className="bg-gray-100 dark:bg-gray-950">
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-2xl md:text-3xl font-bold">Console Preview</h2>
+            <Badge>
+              <Gauge className="h-3.5 w-3.5" /> Phase 1
+            </Badge>
+          </div>
+          <p className="mt-2 text-gray-600 dark:text-gray-300 max-w-2xl">
+            A glimpse of the in-product console that ships with LearningLoop. Dashboard cards below mirror the real
+            `/console` routes so teams can explore latency, reliability, and safety signals before connecting a live
+            data source.
+          </p>
+          <div className="mt-6">
+            <AgentObservabilityDashboard />
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <LinkBtn href="/console">Open Console</LinkBtn>
+            <LinkBtn href="/console/telemetry">Telemetry</LinkBtn>
+            <LinkBtn href="/console/feedback">Feedback</LinkBtn>
+          </div>
+        </Section>
+
         {/* DOCS (internal only) */}
         {ENABLE_INTERNAL_DOCS && (
         <Section id="docs">
@@ -510,7 +564,11 @@ export default function LearningLoopSite() {
             </Badge>
           </div>
           <div className="mt-6 rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-            <div className="h-64">
+            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+              <div>Status: {statusLoading ? "Loading…" : statusData.status.toUpperCase()}</div>
+              <div>Source: /api/status</div>
+            </div>
+            <div className="mt-4 h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <RLineChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -524,8 +582,8 @@ export default function LearningLoopSite() {
           </div>
           <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { k: "MTTD", v: "12h", desc: "Mean Time to Drift Detection" },
-              { k: "MTTR", v: "3d", desc: "Mean Time to Retraining" },
+              { k: "MTTD", v: statusLoading ? "--" : `${statusData.mttd_hours}h`, desc: "Mean Time to Drift Detection" },
+              { k: "MTTR", v: statusLoading ? "--" : `${statusData.mttr_days}d`, desc: "Mean Time to Retraining" },
               { k: "Capture", v: "94%", desc: "UX correction capture rate" },
               { k: "Conf.", v: "+/-4%", desc: "Confidence stability" },
             ].map((m) => (

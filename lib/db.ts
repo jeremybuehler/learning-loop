@@ -40,15 +40,20 @@ const mem = {
   configs: new Map<string, EvaluationConfig>(),
 }
 
-let prismaSingleton: any = null
+type PrismaClient = import('@prisma/client').PrismaClient
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
+
 async function getPrisma() {
   // Skip Prisma when no DATABASE_URL is set to avoid constructor errors
   if (!process.env.DATABASE_URL) return null
-  if (prismaSingleton) return prismaSingleton
+  if (globalForPrisma.prisma) return globalForPrisma.prisma
   try {
-    const mod = await import('@prisma/client') as any
-    prismaSingleton = new (mod as any).PrismaClient()
-    return prismaSingleton
+    const { PrismaClient } = await import('@prisma/client')
+    const client = new PrismaClient()
+    if (process.env.NODE_ENV !== 'production') {
+      globalForPrisma.prisma = client
+    }
+    return client
   } catch {
     return null
   }
